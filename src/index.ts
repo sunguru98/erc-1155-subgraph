@@ -58,7 +58,7 @@ function fetchBalance(token: Token, account: Account): Balance {
 
 function registerTransfer(
   event: ethereum.Event,
-  suffix: String,
+  suffix: string,
   registry: TokenRegistry,
   operator: Account,
   from: Account,
@@ -67,7 +67,9 @@ function registerTransfer(
   value: BigInt
 ): void {
   let token = fetchToken(registry, id);
+  let contract = IERC1155MetadataURI.bind(event.address);
   let ev = new Transfer(events.id(event).concat(suffix));
+
   ev.transaction = transactions.log(event).id;
   ev.timestamp = event.block.timestamp;
   ev.token = token.id;
@@ -94,13 +96,20 @@ function registerTransfer(
     ev.toBalance = balance.id;
   }
 
-  if (!token.URI || replaceAll(token.URI, ['&', '"', "'"], '').length === 0) {
-    let contract = IERC1155MetadataURI.bind(event.address);
-    let callResult = contract.try_uri(id);
+  let callResult = contract.try_uri(id);
+  if (!callResult.reverted) {
+    token.URI = callResult.value;
+  }
 
-    if (!callResult.reverted) {
-      token.URI = callResult.value;
-    }
+  let nameResult = contract.try_name();
+  let symbolResult = contract.try_symbol();
+
+  if (!nameResult.reverted) {
+    token.name = nameResult.value;
+  }
+
+  if (!symbolResult.reverted) {
+    token.symbol = symbolResult.value;
   }
 
   token.save();

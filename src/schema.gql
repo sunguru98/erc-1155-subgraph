@@ -17,6 +17,8 @@ type Token @entity {
   id: ID!
   registry: TokenRegistry!
   identifier: BigInt!
+  name: String
+  symbol: String
   URI: String
   totalSupply: BigInt!
   balances: [Balance!]! @derivedFrom(field: "token")
