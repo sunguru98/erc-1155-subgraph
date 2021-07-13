@@ -9,6 +9,8 @@ const { promises: fs } = require('fs');
 const ERC1155_FINALIZED_DATE = new Date('06-17-2018').toISOString();
 
 const RPCS = {
+  matic: `https://rpc-mainnet.maticvigil.com/`,
+  mumbai: `https://rpc-mumbai.maticvigil.com/`,
   xdai: 'https://rpc.xdaichain.com/',
   mainnet: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
   rinkeby: `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`,
